@@ -20,14 +20,19 @@
  
  ToDo:
  Allow for user selectable digits
+ Pass in a brightness value
  Picture of setup with pin 1 indicator
+ Possibly allow user to specify leading zeros or no
+ 
+ 2264 bytes
+ 2134 bytes with new BigTime functions
+ 2214 if full DP support
+
+ < is usually faster than <= (only one check instead of two)
  
  */
 
 #include "SevSeg.h"
-
-#define COMMON_CATHODE 0
-#define COMMON_ANODE 1
 
 //Create an instance of the object.
 SevSeg sevseg;
@@ -35,7 +40,6 @@ SevSeg sevseg;
 //Create global variables
 unsigned long timer;
 int CentSec = 0;
-
 
 void setup() {
 
@@ -56,14 +60,17 @@ void setup() {
   int segF = 11; //Pin 10 on 4 digit display
   int segG = 12; //Pin 5 on 4 digit display
   int segDP= 13; //Pin 3 on 4 digit display
+  
+  int numberOfDigits = 4;
 
-  sevseg.Begin(displayType, digit1, digit2, digit3, digit4, segA, segB, segC, segD, segE, segF, segG, segDP);
+  sevseg.Begin(displayType, numberOfDigits, digit1, digit2, digit3, digit4, segA, segB, segC, segD, segE, segF, segG, segDP);
+
   timer = millis();
 }
 
 void loop() {
   //Produce an output on the display
-  sevseg.PrintOutput();
+  sevseg.DisplayNumber(CentSec, 2);
 
   //Check if 10ms has elapsed
   unsigned long mils = millis();
@@ -74,7 +81,7 @@ void loop() {
 
     //Update the number to be displayed, with a decimal
     //place in the correct position.
-    sevseg.NewNum(CentSec, (byte)2);
+    //sevseg.NewNumber(CentSec, (byte)2);
   }
 }
 
