@@ -2544,18 +2544,18 @@ We've spent an enormous amount of time creating and checking these footprints an
 <wire x1="36" y1="13" x2="36" y2="-13" width="0.254" layer="21"/>
 <wire x1="36" y1="-13" x2="-36" y2="-13" width="0.254" layer="21"/>
 <wire x1="-36" y1="-13" x2="-36" y2="13" width="0.254" layer="21"/>
-<pad name="1" x="-6.35" y="-11.43" drill="0.9" diameter="1.8796"/>
-<pad name="2" x="-3.81" y="-11.43" drill="0.9" diameter="1.8796"/>
-<pad name="3" x="-1.27" y="-11.43" drill="0.9" diameter="1.8796"/>
-<pad name="4" x="1.27" y="-11.43" drill="0.9" diameter="1.8796"/>
-<pad name="5" x="3.81" y="-11.43" drill="0.9" diameter="1.8796"/>
-<pad name="6" x="6.35" y="-11.43" drill="0.9" diameter="1.8796"/>
-<pad name="7" x="6.35" y="11.43" drill="0.9" diameter="1.8796"/>
-<pad name="8" x="3.81" y="11.43" drill="0.9" diameter="1.8796"/>
-<pad name="9" x="1.27" y="11.43" drill="0.9" diameter="1.8796"/>
-<pad name="10" x="-1.27" y="11.43" drill="0.9" diameter="1.8796"/>
-<pad name="11" x="-3.81" y="11.43" drill="0.9" diameter="1.8796"/>
-<pad name="12" x="-6.35" y="11.43" drill="0.9" diameter="1.8796"/>
+<pad name="1" x="-6.35" y="-10.795" drill="0.9" diameter="1.8796"/>
+<pad name="2" x="-3.81" y="-10.795" drill="0.9" diameter="1.8796"/>
+<pad name="3" x="-1.27" y="-10.795" drill="0.9" diameter="1.8796"/>
+<pad name="4" x="1.27" y="-10.795" drill="0.9" diameter="1.8796"/>
+<pad name="5" x="3.81" y="-10.795" drill="0.9" diameter="1.8796"/>
+<pad name="6" x="6.35" y="-10.795" drill="0.9" diameter="1.8796"/>
+<pad name="7" x="6.35" y="10.795" drill="0.9" diameter="1.8796"/>
+<pad name="8" x="3.81" y="10.795" drill="0.9" diameter="1.8796"/>
+<pad name="9" x="1.27" y="10.795" drill="0.9" diameter="1.8796"/>
+<pad name="10" x="-1.27" y="10.795" drill="0.9" diameter="1.8796"/>
+<pad name="11" x="-3.81" y="10.795" drill="0.9" diameter="1.8796"/>
+<pad name="12" x="-6.35" y="10.795" drill="0.9" diameter="1.8796"/>
 <polygon width="0.254" layer="21">
 <vertex x="-34.1" y="-6.6"/>
 <vertex x="-32.7" y="-1.4"/>
