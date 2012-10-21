@@ -58,7 +58,8 @@ SevSeg::SevSeg()
 //Begin
 /*******************************************************************************************/
 //Set pin modes and turns all displays off
-void SevSeg::Begin(boolean mode_in, byte numOfDigits, byte dig1, byte dig2, byte dig3, byte dig4, 
+void SevSeg::Begin(boolean mode_in, byte numOfDigits, 
+	byte dig1, byte dig2, byte dig3, byte dig4, 
 	byte segA, byte segB, byte segC, byte segD, byte segE, byte segF, byte segG, 
 	byte segDP){
 
@@ -128,22 +129,14 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits, byte dig1, byte dig2, byte
 
 //Refresh Display
 /*******************************************************************************************/
-//Given 1022, we display "10:22"
+//Given a string such as "-A32", we display -A32
 //Each digit is displayed for ~2000us, and cycles through the 4 digits
 //After running through the 4 numbers, the display is turned off
-void SevSeg::DisplayNumber(int toDisplay, byte DecPlace){
+void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
 
 	//For the purpose of this code, digit = 1 is the left most digit, digit = 4 is the right most digit
 
-	//If the number received is negative, set the flag and make the number positive
-	boolean negative = false;
-	if (toDisplay < 0) {
-		negative = true;
-		toDisplay = toDisplay * -1;
-	}
-
-
-	for(byte digit = numberOfDigits ; digit > 0 ; digit--) {
+	for(byte digit = 1 ; digit < (numberOfDigits+1) ; digit++) {
 
 		//Turn on a digit for a short amount of time
 		switch(digit) {
@@ -161,132 +154,26 @@ void SevSeg::DisplayNumber(int toDisplay, byte DecPlace){
 			  break;
 
 			//This only currently works for 4 digits
-
 		}
 
-		if(toDisplay > 0) //The if(toDisplay>0) trick removes the leading zeros
-			lightNumber(toDisplay % 10); //Now display this digit
-		else if(negative == true) { //Special case of negative sign out in front
-			lightNumber(DASH);
-			negative = false; //Now mark negative sign as false so we don't display it multiple times
-		}
+		//displayCharacter(toDisplay[digit-1]); //Now display this digit
+		// displayArray (defined in SevSeg.h) decides which segments are turned on for each number or symbol
+		char characterToDisplay = toDisplay[digit-1];
+		if (characterArray[characterToDisplay][0]) digitalWrite(segmentA, SegOn);
+		if (characterArray[characterToDisplay][1]) digitalWrite(segmentB, SegOn);
+		if (characterArray[characterToDisplay][2]) digitalWrite(segmentC, SegOn);
+		if (characterArray[characterToDisplay][3]) digitalWrite(segmentD, SegOn);
+		if (characterArray[characterToDisplay][4]) digitalWrite(segmentE, SegOn);
+		if (characterArray[characterToDisplay][5]) digitalWrite(segmentF, SegOn);
+		if (characterArray[characterToDisplay][6]) digitalWrite(segmentG, SegOn);
 		
 		//Service the decimal point
-		if(DecPlace == digit)
-			lightNumber(DP);
-
-		toDisplay /= 10;
+		if(DecPlace == digit) digitalWrite(segmentDP, SegOn);
 
 		delayMicroseconds(2000); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
 		//If you set this too long, the display will start to flicker. Set it to 25000 for some fun.
 
 		//Turn off all segments
-		lightNumber(BLANK);
-
-		//Turn off all digits
-		digitalWrite(digit1, DigitOff);
-		digitalWrite(digit2, DigitOff);
-		digitalWrite(digit3, DigitOff);
-		digitalWrite(digit4, DigitOff);
-	}
-  
-}
-
-//Light up a given number
-/*******************************************************************************************/
-//Given a number, light up the right segments
-//We assume the caller has the digit's Anode/Cathode turned on
-void SevSeg::lightNumber(byte numberToDisplay) {
-
-	//Segments in the display are named like this:
-	//    -  A
-    // F / / B
-	//    -  G
-	// E / / C
-	//    -  D
-  
-    switch (numberToDisplay){
-
-	  case 0:
-		digitalWrite(segmentA, SegOn);
-		digitalWrite(segmentB, SegOn);
-		digitalWrite(segmentC, SegOn);
-		digitalWrite(segmentD, SegOn);
-		digitalWrite(segmentE, SegOn);
-		digitalWrite(segmentF, SegOn);
-		break;
-
-	  case 1:
-		digitalWrite(segmentB, SegOn);
-		digitalWrite(segmentC, SegOn);
-		break;
-
-	  case 2:
-		digitalWrite(segmentA, SegOn);
-		digitalWrite(segmentB, SegOn);
-		digitalWrite(segmentD, SegOn);
-		digitalWrite(segmentE, SegOn);
-		digitalWrite(segmentG, SegOn);
-		break;
-
-	  case 3:
-		digitalWrite(segmentA, SegOn);
-		digitalWrite(segmentB, SegOn);
-		digitalWrite(segmentC, SegOn);
-		digitalWrite(segmentD, SegOn);
-		digitalWrite(segmentG, SegOn);
-		break;
-
-	  case 4:
-		digitalWrite(segmentB, SegOn);
-		digitalWrite(segmentC, SegOn);
-		digitalWrite(segmentF, SegOn);
-		digitalWrite(segmentG, SegOn);
-		break;
-
-	  case 5:
-		digitalWrite(segmentA, SegOn);
-		digitalWrite(segmentC, SegOn);
-		digitalWrite(segmentD, SegOn);
-		digitalWrite(segmentF, SegOn);
-		digitalWrite(segmentG, SegOn);
-		break;
-
-	  case 6:
-		digitalWrite(segmentA, SegOn);
-		digitalWrite(segmentC, SegOn);
-		digitalWrite(segmentD, SegOn);
-		digitalWrite(segmentE, SegOn);
-		digitalWrite(segmentF, SegOn);
-		digitalWrite(segmentG, SegOn);
-		break;
-
-	  case 7:
-		digitalWrite(segmentA, SegOn);
-		digitalWrite(segmentB, SegOn);
-		digitalWrite(segmentC, SegOn);
-		break;
-
-	  case 8:
-		digitalWrite(segmentA, SegOn);
-		digitalWrite(segmentB, SegOn);
-		digitalWrite(segmentC, SegOn);
-		digitalWrite(segmentD, SegOn);
-		digitalWrite(segmentE, SegOn);
-		digitalWrite(segmentF, SegOn);
-		digitalWrite(segmentG, SegOn);
-		break;
-
-	  case 9:
-		digitalWrite(segmentA, SegOn);
-		digitalWrite(segmentB, SegOn);
-		digitalWrite(segmentC, SegOn);
-		digitalWrite(segmentD, SegOn);
-		digitalWrite(segmentF, SegOn);
-		digitalWrite(segmentG, SegOn);
-		break;
-
-	  case BLANK:
 		digitalWrite(segmentA, SegOff);
 		digitalWrite(segmentB, SegOff);
 		digitalWrite(segmentC, SegOff);
@@ -295,15 +182,56 @@ void SevSeg::lightNumber(byte numberToDisplay) {
 		digitalWrite(segmentF, SegOff);
 		digitalWrite(segmentG, SegOff);
 		digitalWrite(segmentDP, SegOff);
-		break;
+		//displayCharacter(BLANK);
 
-      case DASH:
-		digitalWrite(segmentG, SegOn);
-		break;
+		//Turn off this digit
+		switch(digit) {
+			case 1:
+			  digitalWrite(digit1, DigitOff);
+			  break;
+			case 2:
+			  digitalWrite(digit2, DigitOff);
+			  break;
+			case 3:
+			  digitalWrite(digit3, DigitOff);
+			  break;
+			case 4:
+			  digitalWrite(digit4, DigitOff);
+			  break;
+
+			//This only currently works for 4 digits
+		}
+	}
+  
+}
+
+//Display a number, letter, or symbol
+/*******************************************************************************************/
+//Given a number or letter, light up the right segments on a given position
+//We assume the caller has the digit's Anode/Cathode turned on
+void SevSeg::displayCharacter(byte characterToDisplay) {
+
+	//Segments in the display are named like this:
+	//    -  A
+    // F / / B
+	//    -  G
+	// E / / C
+	//    -  D
+
+	// displayArray (defined in SevSeg.h) decides which segments are turned on for each number or symbol
+	if (characterArray[characterToDisplay][0]) digitalWrite(segmentA, SegOn);
+	if (characterArray[characterToDisplay][1]) digitalWrite(segmentB, SegOn);
+	if (characterArray[characterToDisplay][2]) digitalWrite(segmentC, SegOn);
+	if (characterArray[characterToDisplay][3]) digitalWrite(segmentD, SegOn);
+	if (characterArray[characterToDisplay][4]) digitalWrite(segmentE, SegOn);
+	if (characterArray[characterToDisplay][5]) digitalWrite(segmentF, SegOn);
+	if (characterArray[characterToDisplay][6]) digitalWrite(segmentG, SegOn);
 	  
+/*
 	  case DP:
 	    digitalWrite(segmentDP, SegOn);
 		break;
+*/
 
 /*	
 		default:
@@ -316,7 +244,6 @@ void SevSeg::lightNumber(byte numberToDisplay) {
 		  lights[digit][6] = 1;
 		  break;
 		  */
-    }
 
     //Set the decimal place lights
     /*if (numberOfDigits - 1 - digit == DecPlace){
