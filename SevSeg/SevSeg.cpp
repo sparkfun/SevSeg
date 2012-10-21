@@ -1,31 +1,44 @@
 /*
- Originally written by Dean Reading deanreading@hotmail.com, 2012
+ This library allows an Arduino to easily display numbers and characters on a 4 digit 7-segment 
+ display without a separate 7-segment display controller.
 
- Version 2.0 updated by Nathan Seidle, 2012: Now works for any digital pin arrangement, common anode and common cathode displays.
- Please see https://github.com/nseidle for support and to send in suggestions 
+ If you have feature suggestions or need support please use the github support page: https://github.com/sparkfun/SevSeg
+
+ Original Library by Dean Reading (deanreading@hotmail.com: http://arduino.cc/playground/Main/SevenSegmentLibrary), 2012
+ Improvements by Nathan Seidle, 2012
+
+ Now works for any digital pin arrangement, common anode and common cathode displays. 
+ Added character support including letters A-F and many symbols.
+
+ Hardware Setup: 4 digit 7 segment displays use 12 digital pins. You may need more pins if your display has colons or 
+ apostrophes.
+
+ There are 4 digit pins and 8 segment pins. Digit pins are connected to the cathodes for common cathode displays, or anodes 
+ for common anode displays. 8 pins control the individual segments (seven segments plus the decimal point). 
+
+ Connect the four digit pins with four limiting resistors in series to any digital or analog pins. Connect the eight segment 
+ pins to any digital or analog pins (no limiting resistors needed). See the SevSeg example for more connection information.
  
- This library allows an Arduino to easily display numbers in decimal format on
- a 4 digit 7-segment display without a separate 7-segment display controller.
+ SparkFun has a large, 1" 7-segment display that has four digits.
+ https://www.sparkfun.com/products/11408
+ Looking at the display like this: 8.8.8.8. pin 1 is on the lower row, starting from the left. 
+ Pin 12 is the top row, upper left pin.
  
- Hardware:
- 4 digit 7 segment displays use 12 digital pins.
- 
- There are:
- 4 common pins; 1 for each digit.  These will be cathodes (negative pins) for
- common cathode displays, or anodes (positive pins) for common anode displays.
- I refer to these as digit pins. 8 pins for the individual segments (seven segments plus the decimal point).
- I refer to these as segment pins.
- 
- Connect the four digit pins with four limiting resistors in series to any digital or analog pins.
- Connect the eight cathodes to any digital or analog pins.
- 
- I have a cheap one from China, and the pins of the display are in the following order:
- Top Row
- 1,a,f,2,3,b
- Bottom Row
- e,d,dp,c,g,4
- Where the digit pins are 1-4 and the segment pins are a-g + dp
- 
+ Pinout:
+ 1: Segment E
+ 2: Segment D
+ 3: Segment DP
+ 4: Segment C
+ 5: Segment G
+ 6: Digit 4
+ 7: Segment B
+ 8: Digit 3
+ 9: Digit 2
+ 10: Segment F
+ 11: Segment A
+ 12: Digit 1
+
+
  Software:
  Call SevSeg.Begin in setup.  
  The first argument (boolean) tells whether the display is common cathode (0) or common
@@ -37,11 +50,11 @@
  
  In summary, Begin(type, digit pins 1-4, segment pins a-g, dp)
  
- The calling program must run the DisplayNumber() function repeatedly to get the number displayed.
+ The calling program must run the DisplayString() function repeatedly to get the number displayed.
  Any number between -999 and 9999 can be displayed. 
  To move the decimal place one digit to the left, use '1' as the second
- argument in NewNum. For example, if you wanted to display '3.141' you would
- call myDisplay.DisplayNumber(3141,3);
+ argument. For example, if you wanted to display '3.141' you would call 
+ myDisplay.DisplayNumber(3141, 1);
  
  */
 
@@ -107,7 +120,6 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
   SegmentPins[6] = segmentG;
   SegmentPins[7] = segmentDP;
 
-
   //Set Pin Modes as outputs
   for (byte digit = 0 ; digit < numberOfDigits ; digit++) {
     pinMode(DigitPins[digit], OUTPUT);
@@ -156,6 +168,8 @@ void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
 			//This only currently works for 4 digits
 		}
 
+		//Here we access the array of segments
+		//This could be cleaned up a bit but it works
 		//displayCharacter(toDisplay[digit-1]); //Now display this digit
 		// displayArray (defined in SevSeg.h) decides which segments are turned on for each number or symbol
 		char characterToDisplay = toDisplay[digit-1];
@@ -203,53 +217,4 @@ void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
 		}
 	}
   
-}
-
-//Display a number, letter, or symbol
-/*******************************************************************************************/
-//Given a number or letter, light up the right segments on a given position
-//We assume the caller has the digit's Anode/Cathode turned on
-void SevSeg::displayCharacter(byte characterToDisplay) {
-
-	//Segments in the display are named like this:
-	//    -  A
-    // F / / B
-	//    -  G
-	// E / / C
-	//    -  D
-
-	// displayArray (defined in SevSeg.h) decides which segments are turned on for each number or symbol
-	if (characterArray[characterToDisplay][0]) digitalWrite(segmentA, SegOn);
-	if (characterArray[characterToDisplay][1]) digitalWrite(segmentB, SegOn);
-	if (characterArray[characterToDisplay][2]) digitalWrite(segmentC, SegOn);
-	if (characterArray[characterToDisplay][3]) digitalWrite(segmentD, SegOn);
-	if (characterArray[characterToDisplay][4]) digitalWrite(segmentE, SegOn);
-	if (characterArray[characterToDisplay][5]) digitalWrite(segmentF, SegOn);
-	if (characterArray[characterToDisplay][6]) digitalWrite(segmentG, SegOn);
-	  
-/*
-	  case DP:
-	    digitalWrite(segmentDP, SegOn);
-		break;
-*/
-
-/*	
-		default:
-		  lights[digit][0] = 0;
-		  lights[digit][1] = 0;
-		  lights[digit][2] = 1;
-		  lights[digit][3] = 1;
-		  lights[digit][4] = 1;
-		  lights[digit][5] = 0;
-		  lights[digit][6] = 1;
-		  break;
-		  */
-
-    //Set the decimal place lights
-    /*if (numberOfDigits - 1 - digit == DecPlace){
-      lights[digit][7] = 1;
-    }
-    else {
-      lights[digit][7] = 0;
-    }*/
 }

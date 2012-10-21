@@ -1,6 +1,9 @@
 This library allows an Arduino to easily display numbers and characters on a 4 digit 7-segment display without a separate 7-segment display controller.
 
+If you have feature suggestions or need support please use the github support page: https://github.com/sparkfun/SevSeg
+
 Original Library by Dean Reading (deanreading@hotmail.com: http://arduino.cc/playground/Main/SevenSegmentLibrary), 2012
+
 Improvements by Nathan Seidle, 2012
 
 Now works for any digital pin arrangement, common anode and common cathode displays. 
