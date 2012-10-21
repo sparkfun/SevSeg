@@ -1,10 +1,10 @@
 /*
-Written by Dean Reading, 2012
-Version 2.0; Now works for any digital pin arrangement, common anode and common cathode displays.
+ Originally written by Dean Reading deanreading@hotmail.com, 2012
+
+ Version 2.0 updated by Nathan Seidle, 2012: Now works for any digital pin arrangement, common anode and common cathode displays.
+ Please see https://github.com/nseidle for support and to send in suggestions 
  
- Direct any questions or suggestions to deanreading@hotmail.com
- 
- This library allows an arduino to easily display numbers in decimal format on
+ This library allows an Arduino to easily display numbers in decimal format on
  a 4 digit 7-segment display without a separate 7-segment display controller.
  
  Hardware:
@@ -13,8 +13,7 @@ Version 2.0; Now works for any digital pin arrangement, common anode and common 
  There are:
  4 common pins; 1 for each digit.  These will be cathodes (negative pins) for
  common cathode displays, or anodes (positive pins) for common anode displays.
- I refer to these as digit pins.
-  8 pins for the individual segments (seven segments plus the decimal point).
+ I refer to these as digit pins. 8 pins for the individual segments (seven segments plus the decimal point).
  I refer to these as segment pins.
  
  Connect the four digit pins with four limiting resistors in series to any digital or analog pins.
@@ -36,15 +35,13 @@ Version 2.0; Now works for any digital pin arrangement, common anode and common 
  The next eight arguments (bytes) tell the library which arduino pins are connected to
  the segment pins of the seven segment display.  Put them in order a to g then the dp.
  
- In summary, Begin(type, digit pins 1-4, segment pins a-g,dp)
+ In summary, Begin(type, digit pins 1-4, segment pins a-g, dp)
  
- The calling program must run the PrintOutput() function repeatedly to get
- the number displayed.
- To set the number displayed, use the NewNum function.  Any number between
- -999 and 9999 can be displayed. Out of range numbers show up as '----'.
+ The calling program must run the DisplayNumber() function repeatedly to get the number displayed.
+ Any number between -999 and 9999 can be displayed. 
  To move the decimal place one digit to the left, use '1' as the second
  argument in NewNum. For example, if you wanted to display '3.141' you would
- call NewNum(3141,3);
+ call myDisplay.DisplayNumber(3141,3);
  
  */
 
