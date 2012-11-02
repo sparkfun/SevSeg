@@ -69,21 +69,19 @@ SevSeg::SevSeg()
   DecPlace = 0;
 
 }
-
-//Begin
-/*******************************************************************************************/
-//Set pin modes and turns all displays off
 void SevSeg::Begin(boolean mode_in, byte numOfDigits, 
-	byte dig1, byte dig2, byte dig3, byte dig4, 
+	byte dig1, byte dig2, byte dig3, byte dig4, byte digitCol, byte digitApos,
 	byte segA, byte segB, byte segC, byte segD, byte segE, byte segF, byte segG, 
-	byte segDP){
-
+	byte segDP, byte segCol, byte segApos)
+{
   //Bring all the variables in from the caller
   numberOfDigits = numOfDigits;
   digit1 = dig1;
   digit2 = dig2;
   digit3 = dig3;
   digit4 = dig4;
+  digitApostrophe = digitApos;
+  digitColon = digitCol;
   segmentA = segA;
   segmentB = segB;
   segmentC = segC;
@@ -92,17 +90,21 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
   segmentF = segF;
   segmentG = segG;
   segmentDP = segDP;
+  segmentApostrophe = segApos;
+  segmentColon = segCol;
   
   //Assign input values to variables
   //mode is what the digit pins must be set at for it to be turned on.  0 for common cathode, 1 for common anode
   mode = mode_in;
-  if(mode == COMMON_ANODE){
+  if(mode == COMMON_ANODE)
+  {
     DigitOn = HIGH;
     DigitOff = LOW;
     SegOn = LOW;
     SegOff = HIGH;
   }
-  else {
+  else 
+  {
     DigitOn = LOW;
     DigitOff = HIGH;
     SegOn = HIGH;
@@ -123,22 +125,52 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
   SegmentPins[7] = segmentDP;
 
   //Set Pin Modes as outputs
-  for (byte digit = 0 ; digit < numberOfDigits ; digit++) {
+  for (byte digit = 0 ; digit < numberOfDigits ; digit++) 
+  {
     pinMode(DigitPins[digit], OUTPUT);
   }
-  for (byte seg = 0 ; seg < 8 ; seg++) {
+  for (byte seg = 0 ; seg < 8 ; seg++) 
+  {
     pinMode(SegmentPins[seg], OUTPUT);
   }
-
   //Turn Everything Off
   //Set all digit pins off. Low for common anode, high for common cathode
-  for (byte digit = 0 ; digit < numberOfDigits ; digit++) {
+  for (byte digit = 0 ; digit < numberOfDigits ; digit++) 
+  {
     digitalWrite(DigitPins[digit], DigitOff);
   }
   //Set all segment pins off. High for common anode, low for common cathode
-  for (byte seg = 0 ; seg < 8 ; seg++) {
+  for (byte seg = 0 ; seg < 8 ; seg++) 
+  {
     digitalWrite(SegmentPins[seg], SegOff);
   }
+ 
+  if (digitColon != 255)
+  {
+	pinMode(digitColon, OUTPUT);
+	digitalWrite(digitColon, DigitOff);
+	pinMode(segmentColon, OUTPUT);
+	digitalWrite(segmentColon, SegOff);
+  }
+  if (digitApostrophe != 255)
+  {
+	pinMode(digitApostrophe, OUTPUT);
+	digitalWrite(digitApostrophe, DigitOff);
+	pinMode(segmentApostrophe, OUTPUT);
+	digitalWrite(segmentApostrophe, SegOff);
+  }
+}
+
+//Begin
+/*******************************************************************************************/
+//Set pin modes and turns all displays off
+void SevSeg::Begin(boolean mode_in, byte numOfDigits, 
+	byte dig1, byte dig2, byte dig3, byte dig4, 
+	byte segA, byte segB, byte segC, byte segD, byte segE, byte segF, byte segG, 
+	byte segDP)
+{
+  Begin(mode_in, numOfDigits, dig1, dig2, dig3, dig4, 255, 255, segA, segB, segC,
+		segD, segE, segF, segG, segDP, 255, 255);
 }
 
 //Set the display brightness
@@ -159,28 +191,34 @@ void SevSeg::SetBrightness(byte percentBright)
 //Each digit is displayed for ~2000us, and cycles through the 4 digits
 //After running through the 4 numbers, the display is turned off
 //Will turn the display on for a given amount of time - this helps control brightness
-void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
-
+void SevSeg::DisplayString(char* toDisplay, byte DecPlace)
+{
+	byte displayCycles = numberOfDigits;
+	if ((digitColon != 255) || (digitApostrophe != 255))
+		displayCycles++;
+		
 	//For the purpose of this code, digit = 1 is the left most digit, digit = 4 is the right most digit
-
-	for(byte digit = 1 ; digit < (numberOfDigits+1) ; digit++) {
-
-		//Turn on a digit for a short amount of time
-		switch(digit) {
+	for(byte digit = 1 ; digit < (displayCycles+1) ; digit++) 
+	{
+		switch(digit) 
+		{
 			case 1:
-			  digitalWrite(digit1, DigitOn);
-			  break;
+				digitalWrite(digit1, DigitOn);
+				break;
 			case 2:
-			  digitalWrite(digit2, DigitOn);
-			  break;
+				digitalWrite(digit2, DigitOn);
+				break;
 			case 3:
-			  digitalWrite(digit3, DigitOn);
-			  break;
+				digitalWrite(digit3, DigitOn);
+				break;
 			case 4:
-			  digitalWrite(digit4, DigitOn);
-			  break;
-
+				digitalWrite(digit4, DigitOn);
+				break;
 			//This only currently works for 4 digits
+			case 5: 
+				digitalWrite(digitColon, DigitOn);
+				digitalWrite(digitApostrophe, DigitOn);
+				break;
 		}
 
 		//Here we access the array of segments
@@ -197,7 +235,14 @@ void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
 		if (characterArray[characterToDisplay][6]) digitalWrite(segmentG, SegOn);
 		
 		//Service the decimal point
-		if(DecPlace == digit) digitalWrite(segmentDP, SegOn);
+		//if(DecPlace == digit) digitalWrite(segmentDP, SegOn);
+		if ((DecPlace & (1<<(digit-1))) && (digit < 5))
+			digitalWrite(segmentDP, SegOn);
+		else if (digit == 5)
+		{
+			if (DecPlace & (1<<4)) digitalWrite(segmentColon, SegOn);
+			if (DecPlace & (1<<5)) digitalWrite(segmentApostrophe, SegOn);	
+		}
 		
 		delayMicroseconds(brightnessDelay + 1); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
 		//The + 1 is a bit of a hack but it removes the possible zero display (0 causes display to become bright and flickery)
@@ -213,9 +258,15 @@ void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
 		digitalWrite(segmentG, SegOff);
 		digitalWrite(segmentDP, SegOff);
 		//displayCharacter(BLANK);
-
+		if (displayCycles > numberOfDigits)
+		{
+			digitalWrite(segmentColon, SegOff);
+			digitalWrite(segmentApostrophe, SegOff);	
+		}
+		
 		//Turn off this digit
-		switch(digit) {
+		switch(digit) 
+		{
 			case 1:
 			  digitalWrite(digit1, DigitOff);
 			  break;
@@ -228,13 +279,14 @@ void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
 			case 4:
 			  digitalWrite(digit4, DigitOff);
 			  break;
+			case 5: 
+				digitalWrite(digitColon, DigitOff);
+				digitalWrite(digitApostrophe, DigitOff);
+				break;
 
 			//This only currently works for 4 digits
 		}
-
 		// The display is on for microSeconds(brightnessLevel + 1), now turn off for the remainder of the framePeriod
-		delayMicroseconds(FRAMEPERIOD - brightnessDelay + 1); //the +1 is a hack so that we can never have a delayMicroseconds(0), causes display to flicker 
-		
-	}
-  
+		delayMicroseconds(FRAMEPERIOD - brightnessDelay + 1); //the +1 is a hack so that we can never have a delayMicroseconds(0), causes display to flicker 		
+	}  
 }
