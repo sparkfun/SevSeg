@@ -166,9 +166,10 @@ public:
   SevSeg();
 
   //Public Functions
-  void DisplayString(char*, byte, unsigned int);
+  void DisplayString(char*, byte);
 //  void NewNumber(int number_in, byte DecPlace_in); 
   void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP);
+  void SetBrightness(byte percentBright);
 
   //Public Variables
 
@@ -184,6 +185,8 @@ private:
   byte segmentA, segmentB, segmentC, segmentD, segmentE, segmentF, segmentG, segmentDP;
   
   byte numberOfDigits;
+  
+  unsigned int brightnessDelay;
 
   byte DigitPins[4];
   byte SegmentPins[8];

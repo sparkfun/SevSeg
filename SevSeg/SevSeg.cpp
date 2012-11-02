@@ -141,13 +141,25 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
   }
 }
 
+//Set the display brightness
+/*******************************************************************************************/
+//Given a value between 0 and 100 (0% and 100%), set the brightness variable on the display
+//We need to error check and map the incoming value
+void SevSeg::SetBrightness(byte percentBright)
+{
+	//Error check and scale brightnessLevel
+	if(percentBright > 100) percentBright = 100;
+	brightnessDelay = map(percentBright, 0, 100, 0, FRAMEPERIOD); //map brightnessDelay to 0 to the max which is framePeriod
+}
+
+
 //Refresh Display
 /*******************************************************************************************/
 //Given a string such as "-A32", we display -A32
 //Each digit is displayed for ~2000us, and cycles through the 4 digits
 //After running through the 4 numbers, the display is turned off
 //Will turn the display on for a given amount of time - this helps control brightness
-void SevSeg::DisplayString(char* toDisplay, byte DecPlace, unsigned int brightnessLevel){
+void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
 
 	//For the purpose of this code, digit = 1 is the left most digit, digit = 4 is the right most digit
 
@@ -187,7 +199,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecPlace, unsigned int brightne
 		//Service the decimal point
 		if(DecPlace == digit) digitalWrite(segmentDP, SegOn);
 		
-		delayMicroseconds(brightnessLevel + 1); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
+		delayMicroseconds(brightnessDelay + 1); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
 		//The + 1 is a bit of a hack but it removes the possible zero display (0 causes display to become bright and flickery)
 		//If you set this too long, the display will start to flicker. Set it to 25000 for some fun.
 
@@ -221,7 +233,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecPlace, unsigned int brightne
 		}
 
 		// The display is on for microSeconds(brightnessLevel + 1), now turn off for the remainder of the framePeriod
-		delayMicroseconds(FRAMEPERIOD - brightnessLevel + 1); //the +1 is a hack so that we can never have a delayMicroseconds(0), causes display to flicker 
+		delayMicroseconds(FRAMEPERIOD - brightnessDelay + 1); //the +1 is a hack so that we can never have a delayMicroseconds(0), causes display to flicker 
 		
 	}
   
