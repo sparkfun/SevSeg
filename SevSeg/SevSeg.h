@@ -15,6 +15,17 @@
 
 #define BLANK 16 //Special character that turns off all segments (we chose 16 as it is the first spot that has this)
 
+// framePeriod controls the length of time between display refreshes
+// It's also closely linked to the brightness setting
+#define FRAMEPERIOD 3000 
+//Total amount of time (in microseconds) for the display frame. 1,000us is roughly 1000Hz update rate
+//A framePeriod of:
+//5000 is flickery
+//3000 has good low brightness vs full brightness
+//2000 works well
+//500 seems like the low brightness is pretty bright, not great
+
+
 //This is the combined array that contains all the segment configurations for many different characters and symbols
 const unsigned char characterArray[128][7] = {
 // A  B  C  D  E  F  G  Segments
@@ -155,7 +166,7 @@ public:
   SevSeg();
 
   //Public Functions
-  void DisplayString(char*, byte);
+  void DisplayString(char*, byte, unsigned int);
 //  void NewNumber(int number_in, byte DecPlace_in); 
   void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP);
 

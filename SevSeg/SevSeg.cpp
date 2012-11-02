@@ -54,7 +54,9 @@
  Any number between -999 and 9999 can be displayed. 
  To move the decimal place one digit to the left, use '1' as the second
  argument. For example, if you wanted to display '3.141' you would call 
- myDisplay.DisplayNumber(3141, 1);
+ myDisplay.DisplayString("3141", 1, 250);
+ The last argument (250) is the amount of time the display will be on in microseconds.
+ Used in conjunction with
  
  */
 
@@ -144,7 +146,8 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
 //Given a string such as "-A32", we display -A32
 //Each digit is displayed for ~2000us, and cycles through the 4 digits
 //After running through the 4 numbers, the display is turned off
-void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
+//Will turn the display on for a given amount of time - this helps control brightness
+void SevSeg::DisplayString(char* toDisplay, byte DecPlace, unsigned int brightnessLevel){
 
 	//For the purpose of this code, digit = 1 is the left most digit, digit = 4 is the right most digit
 
@@ -183,8 +186,9 @@ void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
 		
 		//Service the decimal point
 		if(DecPlace == digit) digitalWrite(segmentDP, SegOn);
-
-		delayMicroseconds(2000); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
+		
+		delayMicroseconds(brightnessLevel + 1); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
+		//The + 1 is a bit of a hack but it removes the possible zero display (0 causes display to become bright and flickery)
 		//If you set this too long, the display will start to flicker. Set it to 25000 for some fun.
 
 		//Turn off all segments
@@ -215,6 +219,10 @@ void SevSeg::DisplayString(char* toDisplay, byte DecPlace){
 
 			//This only currently works for 4 digits
 		}
+
+		// The display is on for microSeconds(brightnessLevel + 1), now turn off for the remainder of the framePeriod
+		delayMicroseconds(FRAMEPERIOD - brightnessLevel + 1); //the +1 is a hack so that we can never have a delayMicroseconds(0), causes display to flicker 
+		
 	}
   
 }

@@ -1,6 +1,6 @@
 /*
  7-23-2012
- Spark Fun Electronics
+   Spark Fun Electronics
  Nathan Seidle
  
  This code is originally based Dean Reading's Library deanreading@hotmail.com
