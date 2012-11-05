@@ -219,9 +219,9 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 		//This could be cleaned up a bit but it works
 		//displayCharacter(toDisplay[digit-1]); //Now display this digit
 		// displayArray (defined in SevSeg.h) decides which segments are turned on for each number or symbol
-		unsigned char characterToDisplay = toDisplay[digit-1];
-		if (characterToDisplay & 0x80)
-		{	// Could remake a segmentPins[] array to get this in a for loop
+		char characterToDisplay = toDisplay[digit-1];
+		if (characterToDisplay & 0x80)	// bit 7 enables bit-per-segment control
+		{	// Each bit of characterToDisplay turns on a single segment (from A-to-G)
 			if (characterToDisplay & 0x01) digitalWrite(segmentA, SegOn);
 			if (characterToDisplay & 0x02) digitalWrite(segmentB, SegOn);
 			if (characterToDisplay & 0x04) digitalWrite(segmentC, SegOn);
