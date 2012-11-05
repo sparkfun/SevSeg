@@ -1,6 +1,12 @@
 //Written by Dean Reading, 2012.  deanreading@hotmail.com
 //See .cpp file for info
 
+//    -  A
+// F | | B
+//    _  G
+// E | | C
+//    _  D
+
 #ifndef SevSeg_h
 #define SevSeg_h
 
@@ -17,7 +23,8 @@
 
 // framePeriod controls the length of time between display refreshes
 // It's also closely linked to the brightness setting
-#define FRAMEPERIOD 3000 
+#define FRAMEPERIOD 2000 
+//#define FRAMEPERIOD 2000
 //Total amount of time (in microseconds) for the display frame. 1,000us is roughly 1000Hz update rate
 //A framePeriod of:
 //5000 is flickery
@@ -169,6 +176,7 @@ public:
   void DisplayString(char*, byte);
 //  void NewNumber(int number_in, byte DecPlace_in); 
   void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP);
+  void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte digitColon, byte digitApostrophe, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP, byte segmentColon, byte segmentApostrophe);
   void SetBrightness(byte percentBright);
 
   //Public Variables
@@ -182,6 +190,7 @@ private:
   boolean mode, DigitOn, DigitOff, SegOn, SegOff;
 
   byte digit1, digit2, digit3, digit4;
+  byte digitApostrophe, digitColon, segmentApostrophe, segmentColon;
   byte segmentA, segmentB, segmentC, segmentD, segmentE, segmentF, segmentG, segmentDP;
   
   byte numberOfDigits;
@@ -193,7 +202,7 @@ private:
   boolean lights[4][8];
   byte nums[4];
 
-  byte DecPlace;
+  byte DecAposColon;
 };
 
 #endif
