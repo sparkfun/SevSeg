@@ -219,15 +219,27 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 		//This could be cleaned up a bit but it works
 		//displayCharacter(toDisplay[digit-1]); //Now display this digit
 		// displayArray (defined in SevSeg.h) decides which segments are turned on for each number or symbol
-		char characterToDisplay = toDisplay[digit-1];
-		if (characterArray[characterToDisplay][0]) digitalWrite(segmentA, SegOn);
-		if (characterArray[characterToDisplay][1]) digitalWrite(segmentB, SegOn);
-		if (characterArray[characterToDisplay][2]) digitalWrite(segmentC, SegOn);
-		if (characterArray[characterToDisplay][3]) digitalWrite(segmentD, SegOn);
-		if (characterArray[characterToDisplay][4]) digitalWrite(segmentE, SegOn);
-		if (characterArray[characterToDisplay][5]) digitalWrite(segmentF, SegOn);
-		if (characterArray[characterToDisplay][6]) digitalWrite(segmentG, SegOn);
-		
+		unsigned char characterToDisplay = toDisplay[digit-1];
+		if (characterToDisplay & 0x80)
+		{	// Could remake a segmentPins[] array to get this in a for loop
+			if (characterToDisplay & 0x01) digitalWrite(segmentA, SegOn);
+			if (characterToDisplay & 0x02) digitalWrite(segmentB, SegOn);
+			if (characterToDisplay & 0x04) digitalWrite(segmentC, SegOn);
+			if (characterToDisplay & 0x08) digitalWrite(segmentD, SegOn);
+			if (characterToDisplay & 0x10) digitalWrite(segmentE, SegOn);
+			if (characterToDisplay & 0x20) digitalWrite(segmentF, SegOn);
+			if (characterToDisplay & 0x40) digitalWrite(segmentG, SegOn);
+		}
+		else
+		{
+			if (characterArray[characterToDisplay][0]) digitalWrite(segmentA, SegOn);
+			if (characterArray[characterToDisplay][1]) digitalWrite(segmentB, SegOn);
+			if (characterArray[characterToDisplay][2]) digitalWrite(segmentC, SegOn);
+			if (characterArray[characterToDisplay][3]) digitalWrite(segmentD, SegOn);
+			if (characterArray[characterToDisplay][4]) digitalWrite(segmentE, SegOn);
+			if (characterArray[characterToDisplay][5]) digitalWrite(segmentF, SegOn);
+			if (characterArray[characterToDisplay][6]) digitalWrite(segmentG, SegOn);
+		}
 		//Service the decimal point, apostrophe and colon
 		if ((DecAposColon & (1<<(digit-1))) && (digit < 5)) //Test DecAposColon to see if we need to turn on a decimal point
 			digitalWrite(segmentDP, SegOn);
