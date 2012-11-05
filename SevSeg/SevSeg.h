@@ -1,6 +1,12 @@
 //Written by Dean Reading, 2012.  deanreading@hotmail.com
 //See .cpp file for info
 
+//    -  A
+// F | | B
+//    _  G
+// E | | C
+//    _  D
+
 #ifndef SevSeg_h
 #define SevSeg_h
 
@@ -17,7 +23,7 @@
 
 // framePeriod controls the length of time between display refreshes
 // It's also closely linked to the brightness setting
-#define FRAMEPERIOD 3000 
+#define FRAMEPERIOD 2000 
 //#define FRAMEPERIOD 2000
 //Total amount of time (in microseconds) for the display frame. 1,000us is roughly 1000Hz update rate
 //A framePeriod of:
@@ -196,7 +202,7 @@ private:
   boolean lights[4][8];
   byte nums[4];
 
-  byte DecPlace;
+  byte DecAposColon;
 };
 
 #endif
