@@ -1,6 +1,6 @@
 /*
  7-23-2012
-   Spark Fun Electronics
+ Spark Fun Electronics
  Nathan Seidle
  
  This code is originally based Dean Reading's Library deanreading@hotmail.com
@@ -32,18 +32,13 @@
  12: Digit 1
  
  ToDo:
- Allow for user selectable digits
- Pass in a brightness value
  Picture of setup with pin 1 indicator
- Possibly allow user to specify leading zeros or no
  Covert big byte array to binary: http://arduino.cc/forum/index.php/topic,39760.0.html
  Measure current going through limiting resistors to make sure we're getting 20mA per segment per digit (should be 80mA for four digits)
  
  2264 bytes
  2134 bytes with new BigTime functions
  2214 if full DP support
- 
- < is usually faster than <= (only one check instead of two)
  
  */
 
@@ -56,7 +51,8 @@ SevSeg myDisplay;
 unsigned long timer;
 int deciSecond = 0;
 
-void setup() {
+void setup()
+{
 
   int displayType = COMMON_CATHODE; //Your display is either common cathode or common anode
 
@@ -96,25 +92,26 @@ void setup() {
   int segG = 4; //Pin 5 on my 4 digit display
   int segDP= 5; //Pin 3 on my 4 digit display
 
-  int numberOfDigits = 4; //Do you have a 2 or 4 digit display?
+  int numberOfDigits = 4; //Do you have a 1, 2 or 4 digit display?
 
   myDisplay.Begin(displayType, numberOfDigits, digit1, digit2, digit3, digit4, segA, segB, segC, segD, segE, segF, segG, segDP);
+  
+  myDisplay.SetBrightness(100); //Set the display to 100% brightness level
 
   timer = millis();
 }
 
-void loop() {
-  //Produce an output on the display
-
-  int negativeDeciSecond = (deciSecond * -1);
-  
+void loop()
+{
   //Example ways of displaying a decimal number
   char tempString[10]; //Used for sprintf
   sprintf(tempString, "%4d", deciSecond); //Convert deciSecond into a string that is right adjusted
   //sprintf(tempString, "%d", deciSecond); //Convert deciSecond into a string that is left adjusted
   //sprintf(tempString, "%04d", deciSecond); //Convert deciSecond into a string with leading zeros
-  //sprintf(tempString, "%4d", negativeDeciSecond); //Shows a negative sign infront of right adjusted number
+  //sprintf(tempString, "%4d", deciSecond * -1); //Shows a negative sign infront of right adjusted number
   //sprintf(tempString, "%4X", deciSecond); //Count in HEX, right adjusted
+
+  //Produce an output on the display
   myDisplay.DisplayString(tempString, 3); //(numberToDisplay, decimal point location)
 
   //Other examples
@@ -122,7 +119,8 @@ void loop() {
   //myDisplay.DisplayString("-23b", 3); //Display string, decimal point in third position
 
   //Check if 10ms has elapsed
-  if (millis() - timer >= 100) {
+  if (millis() - timer >= 100)
+  {
     timer = millis();
     deciSecond++;
   }
