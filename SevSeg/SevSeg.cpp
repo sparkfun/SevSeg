@@ -124,40 +124,33 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
   SegmentPins[6] = segmentG;
   SegmentPins[7] = segmentDP;
 
-  //Set Pin Modes as outputs
-  for (byte digit = 0 ; digit < numberOfDigits ; digit++) 
-  {
-    pinMode(DigitPins[digit], OUTPUT);
-  }
-  for (byte seg = 0 ; seg < 8 ; seg++) 
-  {
-    pinMode(SegmentPins[seg], OUTPUT);
-  }
-  //Turn Everything Off
+  //Turn everything Off before setting pin as output
   //Set all digit pins off. Low for common anode, high for common cathode
   for (byte digit = 0 ; digit < numberOfDigits ; digit++) 
   {
     digitalWrite(DigitPins[digit], DigitOff);
+    pinMode(DigitPins[digit], OUTPUT);
   }
   //Set all segment pins off. High for common anode, low for common cathode
   for (byte seg = 0 ; seg < 8 ; seg++) 
   {
     digitalWrite(SegmentPins[seg], SegOff);
+    pinMode(SegmentPins[seg], OUTPUT);
   }
- 
+
   if (digitColon != 255)
   {
-	pinMode(digitColon, OUTPUT);
 	digitalWrite(digitColon, DigitOff);
-	pinMode(segmentColon, OUTPUT);
+	pinMode(digitColon, OUTPUT);
 	digitalWrite(segmentColon, SegOff);
+	pinMode(segmentColon, OUTPUT);
   }
   if (digitApostrophe != 255)
   {
-	pinMode(digitApostrophe, OUTPUT);
 	digitalWrite(digitApostrophe, DigitOff);
-	pinMode(segmentApostrophe, OUTPUT);
+	pinMode(digitApostrophe, OUTPUT);
 	digitalWrite(segmentApostrophe, SegOff);
+	pinMode(segmentApostrophe, OUTPUT);
   }
 }
 
