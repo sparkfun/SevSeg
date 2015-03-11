@@ -36,7 +36,7 @@
 
 
 //This is the combined array that contains all the segment configurations for many different characters and symbols
-const prog_uint8_t characterArray[] PROGMEM = {
+const uint8_t characterArray[] PROGMEM = {
 //  ABCDEFG  Segments
   0b1111110, // 0
   0b0110000, // 1
