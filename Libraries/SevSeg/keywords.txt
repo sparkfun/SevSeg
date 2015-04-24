@@ -1,3 +1,0 @@
-SevSeg	KEYWORD1
-NewNum	KEYWORD2
-PrintOutput	KEYWORD2
