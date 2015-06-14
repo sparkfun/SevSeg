@@ -79,11 +79,12 @@ void loop()
   //sprintf(tempString, "%4X", deciSecond); //Count in HEX, right adjusted
 
   //Produce an output on the display
-  myDisplay.DisplayString(tempString, 0); //(numberToDisplay, decimal point location)
+  myDisplay.DisplayString(tempString, 4); //(numberToDisplay, decimal point location in binary number [4 means the third digit])
 
   //Other examples
   //myDisplay.DisplayString(tempString, 0); //Display string, no decimal point
-  //myDisplay.DisplayString("-23b", 3); //Display string, decimal point in third position
+  //myDisplay.DisplayString("-235", 2); //Display string, decimal point in second position
+  //myDisplay.DisplayString("8888", 15); //Everything on!
 
   //Check if 10ms has elapsed
   if (millis() - timer >= 100)
