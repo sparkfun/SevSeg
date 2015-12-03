@@ -12,7 +12,13 @@ Connect the four digit pins with four limiting resistors in series to any digita
 Repository Contents
 -------------------
 
-* **/Libraries** - All Arduino libraries and board examples
+* **/examples** - Arduino example sketches
+* **/src** - Source files for Arduino library
+
+Documentation
+--------------
+* **[Hookup Guide](https://learn.sparkfun.com/tutorials/using-the-serial-7-segment-display)** - Basic hookup guide for the Serial Segment Displays.
+* **[Compatible Displays](https://www.sparkfun.com/wish_lists/120699)** - Products that work with this code. 
 
 License Information
 -------------------
