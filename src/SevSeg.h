@@ -1,12 +1,6 @@
 //Written by Dean Reading, 2012.  deanreading@hotmail.com
 //See .cpp file for info
 
-//    -  A
-// F | | B
-//    _  G
-// E | | C
-//    _  D
-
 #ifndef SevSeg_h
 #define SevSeg_h
 
