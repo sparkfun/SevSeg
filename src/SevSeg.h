@@ -38,16 +38,16 @@
 //This is the combined array that contains all the segment configurations for many different characters and symbols
 const uint8_t characterArray[] PROGMEM = {
 //  ABCDEFG  Segments      7-segment map:
-  0b1111110, // 0                AAA
-  0b0110000, // 1               F   B
-  0b1101101, // 2               F   B
-  0b1111001, // 3                GGG
-  0b0110011, // 4               E   C
-  0b1011011, // 5               E   C
-  0b1011111, // 6                DDD
-  0b1110000, // 7
-  0b1111111, // 8
-  0b1111011, // 9
+  0b1111110, // 0   "0"          AAA
+  0b0110000, // 1   "1"         F   B
+  0b1101101, // 2   "2"         F   B
+  0b1111001, // 3   "3"          GGG
+  0b0110011, // 4   "4"         E   C
+  0b1011011, // 5   "5"         E   C
+  0b1011111, // 6   "6"          DDD
+  0b1110000, // 7   "7"
+  0b1111111, // 8   "8"
+  0b1111011, // 9   "9"
   0b1110111, // 10  "A"
   0b0011111, // 11  "b"
   0b1001110, // 12  "C"
