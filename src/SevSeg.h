@@ -26,7 +26,6 @@
 // framePeriod controls the length of time between display refreshes
 // It's also closely linked to the brightness setting
 #define FRAMEPERIOD 2000 
-//#define FRAMEPERIOD 2000
 //Total amount of time (in microseconds) for the display frame. 1,000us is roughly 1000Hz update rate
 //A framePeriod of:
 //5000 is flickery
