@@ -49,9 +49,9 @@ const uint8_t characterArray[] PROGMEM = {
   0b1111111, // 8
   0b1111011, // 9
   0b1110111, // 10  "A"
-  0b0011111, // 11  "B"
+  0b0011111, // 11  "b"
   0b1001110, // 12  "C"
-  0b0111101, // 13  "D"
+  0b0111101, // 13  "d"
   0b1001111, // 14  "E"
   0b1000111, // 15  "F"
   0b0000000, // 16  NO DISPLAY
@@ -104,9 +104,9 @@ const uint8_t characterArray[] PROGMEM = {
   0b0000000, // 63 '?'  NO DISPLAY
   0b0000000, // 64 '@'  NO DISPLAY
   0b1110111, // 65 'A'
-  0b0011111, // 66 'B'
+  0b0011111, // 66 'b'
   0b1001110, // 67 'C'
-  0b0111101, // 68 'D'
+  0b0111101, // 68 'd'
   0b1001111, // 69 'E'
   0b1000111, // 70 'F'
   0b1011110, // 71 'G'
@@ -116,18 +116,18 @@ const uint8_t characterArray[] PROGMEM = {
   0b0000000, // 75 'K'  NO DISPLAY
   0b0001110, // 76 'L'
   0b0000000, // 77 'M'  NO DISPLAY
-  0b0010101, // 78 'N'
+  0b0010101, // 78 'n'
   0b1111110, // 79 'O'
   0b1100111, // 80 'P'
-  0b1110011, // 81 'Q'
-  0b0000101, // 82 'R'
+  0b1110011, // 81 'q'
+  0b0000101, // 82 'r'
   0b1011011, // 83 'S'
-  0b0001111, // 84 'T'
+  0b0001111, // 84 't'
   0b0111110, // 85 'U'
   0b0000000, // 86 'V'  NO DISPLAY
   0b0000000, // 87 'W'  NO DISPLAY
   0b0000000, // 88 'X'  NO DISPLAY
-  0b0111011, // 89 'Y'
+  0b0111011, // 89 'y'
   0b0000000, // 90 'Z'  NO DISPLAY
   0b1001110, // 91 '['
   0b0000000, // 92 '\'  NO DISPLAY
@@ -140,8 +140,8 @@ const uint8_t characterArray[] PROGMEM = {
   0b0001101, // 99 'c'
   0b0111101, // 100 'd' SAME AS CAP
   0b1101111, // 101 'e'
-  0b1000111, // 102 'f' SAME AS CAP
-  0b1011110, // 103 'g' SAME AS CAP
+  0b1000111, // 102 'F' SAME AS CAP
+  0b1011110, // 103 'G' SAME AS CAP
   0b0010111, // 104 'h'
   0b0010000, // 105 'i'
   0b0111000, // 106 'j' SAME AS CAP
@@ -153,7 +153,7 @@ const uint8_t characterArray[] PROGMEM = {
   0b1100111, // 112 'p' SAME AS CAP
   0b1110011, // 113 'q' SAME AS CAP
   0b0000101, // 114 'r' SAME AS CAP
-  0b1011011, // 115 's' SAME AS CAP
+  0b1011011, // 115 'S' SAME AS CAP
   0b0001111, // 116 't' SAME AS CAP
   0b0011100, // 117 'u'
   0b0000000, // 118 'b'  NO DISPLAY
