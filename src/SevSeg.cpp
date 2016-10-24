@@ -225,13 +225,14 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 		}
 		else
 		{
-			if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<6)) digitalWrite(segmentA, SegOn);
-			if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<5)) digitalWrite(segmentB, SegOn);
-			if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<4)) digitalWrite(segmentC, SegOn);
-			if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<3)) digitalWrite(segmentD, SegOn);
-			if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<2)) digitalWrite(segmentE, SegOn);
-			if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<1)) digitalWrite(segmentF, SegOn);
-			if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<0)) digitalWrite(segmentG, SegOn);
+			const uint8_t chr = pgm_read_byte(&characterArray[characterToDisplay]);
+			if (chr & (1<<6)) digitalWrite(segmentA, SegOn);
+			if (chr & (1<<5)) digitalWrite(segmentB, SegOn);
+			if (chr & (1<<4)) digitalWrite(segmentC, SegOn);
+			if (chr & (1<<3)) digitalWrite(segmentD, SegOn);
+			if (chr & (1<<2)) digitalWrite(segmentE, SegOn);
+			if (chr & (1<<1)) digitalWrite(segmentF, SegOn);
+			if (chr & (1<<0)) digitalWrite(segmentG, SegOn);
 		}
 		//Service the decimal point, apostrophe and colon
 		if ((DecAposColon & (1<<(digit-1))) && (digit < 5)) //Test DecAposColon to see if we need to turn on a decimal point
