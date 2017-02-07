@@ -65,7 +65,6 @@ SevSeg::SevSeg()
 {
   //Initial values
   DecAposColon = 0; //This variable tracks the decimal place, apostrophe, and colon (if the display has support)
-
 }
 void SevSeg::Begin(boolean mode_in, byte numOfDigits, 
 	byte dig1, byte dig2, byte dig3, byte dig4, 
@@ -152,6 +151,9 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
 	digitalWrite(segmentApostrophe, SegOff);
 	pinMode(segmentApostrophe, OUTPUT);
   }
+
+  previousMicros = 0;
+  timer = 0;
 }
 
 //Begin
@@ -174,9 +176,10 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
 //We need to error check and map the incoming value
 void SevSeg::SetBrightness(byte percentBright)
 {
-	//Error check and scale brightnessLevel
-	if(percentBright > 100) percentBright = 100;
-	brightnessDelay = map(percentBright, 0, 100, 0, FRAMEPERIOD); //map brightnessDelay to 0 to the max which is framePeriod
+	//Error check brightnessLevel
+	if(percentBright > 100){brightness = 100;}
+  
+  brightnessDelay = (100-brightness)*numberOfDigits*100/brightness;
 }
 
 
@@ -189,113 +192,153 @@ void SevSeg::SetBrightness(byte percentBright)
 void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 {
 	//For the purpose of this code, digit = 1 is the left most digit, digit = 4 is the right most digit
-	for(byte digit = 1 ; digit < (numberOfDigits+1) ; digit++) 
-	{
-		switch(digit) 
-		{
-			case 1:
-				digitalWrite(digit1, DigitOn);
-				break;
-			case 2:
-				digitalWrite(digit2, DigitOn);
-				break;
-			case 3:
-				digitalWrite(digit3, DigitOn);
-				break;
-			case 4:
-				digitalWrite(digit4, DigitOn);
-				break;
-			//This only currently works for 4 digits
-		}
+  static byte digit = 0;         // to be incremented to cycle through digits
+  if(micros() - previousMicros > timer)
+  {
+    if (digit == numberOfDigits + 1) // meaning the display has a colon or apostrophe
+    {
+      turnDigitOff(numberOfDigits);
+      //After we've gone through the digits, we control the colon and apostrophe (if the display supports it)
+      //Turn on the colon and/or apostrophe
+      if ((digitColon != 255) || (digitApostrophe != 255))
+      {
+        if (DecAposColon & (1<<4)) //Test to see if we need to turn on the Colon
+        {
+          digitalWrite(digitColon, DigitOn);
+          digitalWrite(segmentColon, SegOn);
+        }
+        if (DecAposColon & (1<<5)) //Test DecAposColon to see if we need to turn on Apostrophe
+        {
+          digitalWrite(digitApostrophe, DigitOn);
+          digitalWrite(segmentApostrophe, SegOn);
+        }
+      }
+      digit = 0;
+      previousMicros = micros();
+      timer = brightness; //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
+    }
 
-		//Here we access the array of segments
-		//This could be cleaned up a bit but it works
-		//displayCharacter(toDisplay[digit-1]); //Now display this digit
-		// displayArray (defined in SevSeg.h) decides which segments are turned on for each number or symbol
-		char characterToDisplay = toDisplay[digit-1];
-		if (characterToDisplay & 0x80)	// bit 7 enables bit-per-segment control
-		{	// Each bit of characterToDisplay turns on a single segment (from A-to-G)
-			if (characterToDisplay & 0x01) digitalWrite(segmentA, SegOn);
-			if (characterToDisplay & 0x02) digitalWrite(segmentB, SegOn);
-			if (characterToDisplay & 0x04) digitalWrite(segmentC, SegOn);
-			if (characterToDisplay & 0x08) digitalWrite(segmentD, SegOn);
-			if (characterToDisplay & 0x10) digitalWrite(segmentE, SegOn);
-			if (characterToDisplay & 0x20) digitalWrite(segmentF, SegOn);
-			if (characterToDisplay & 0x40) digitalWrite(segmentG, SegOn);
-		}
-		else
-		{
-			const uint8_t chr = pgm_read_byte(&characterArray[characterToDisplay]);
-			if (chr & (1<<6)) digitalWrite(segmentA, SegOn);
-			if (chr & (1<<5)) digitalWrite(segmentB, SegOn);
-			if (chr & (1<<4)) digitalWrite(segmentC, SegOn);
-			if (chr & (1<<3)) digitalWrite(segmentD, SegOn);
-			if (chr & (1<<2)) digitalWrite(segmentE, SegOn);
-			if (chr & (1<<1)) digitalWrite(segmentF, SegOn);
-			if (chr & (1<<0)) digitalWrite(segmentG, SegOn);
-		}
-		//Service the decimal point, apostrophe and colon
-		if ((DecAposColon & (1<<(digit-1))) && (digit < 5)) //Test DecAposColon to see if we need to turn on a decimal point
-			digitalWrite(segmentDP, SegOn);
-		
-		delayMicroseconds(brightnessDelay + 1); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
-		//The + 1 is a bit of a hack but it removes the possible zero display (0 causes display to become bright and flickery)
-		//If you set this too long, the display will start to flicker. Set it to 25000 for some fun.
+    else if(digit == numberOfDigits)
+    {
+      turnDigitOff(numberOfDigits-1);
+      turnDigitOn(toDisplay, numberOfDigits);
+      digit = digitColon != 255 || digitApostrophe != 255 ? digit+1 : 0;
+      previousMicros = micros();
+      timer = brightness; //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
+    }
 
-		//Turn off all segments
-		digitalWrite(segmentA, SegOff);
-		digitalWrite(segmentB, SegOff);
-		digitalWrite(segmentC, SegOff);
-		digitalWrite(segmentD, SegOff);
-		digitalWrite(segmentE, SegOff);
-		digitalWrite(segmentF, SegOff);
-		digitalWrite(segmentG, SegOff);
-		digitalWrite(segmentDP, SegOff);
-
-		//Turn off this digit
-		switch(digit) 
-		{
-			case 1:
-			  digitalWrite(digit1, DigitOff);
-			  break;
-			case 2:
-			  digitalWrite(digit2, DigitOff);
-			  break;
-			case 3:
-			  digitalWrite(digit3, DigitOff);
-			  break;
-			case 4:
-			  digitalWrite(digit4, DigitOff);
-			  break;
-			//This only currently works for 4 digits
-		}
-		// The display is on for microSeconds(brightnessLevel + 1), now turn off for the remainder of the framePeriod
-		delayMicroseconds(FRAMEPERIOD - brightnessDelay + 1); //the +1 is a hack so that we can never have a delayMicroseconds(0), causes display to flicker 		
+    else
+    {
+      if (digit == 0)
+      {
+        if ((digitColon != 255) || (digitApostrophe != 255))
+        {
+          digitalWrite(digitColon, DigitOff);
+          digitalWrite(segmentColon, SegOff);
+          digitalWrite(digitApostrophe, DigitOff);
+          digitalWrite(segmentApostrophe, SegOff);
+        }
+        else
+        {
+          turnDigitOff(numberOfDigits);
+        }
+        // The display is on for microSeconds(brightnessLevel + 1), now turn off for the remainder of the framePeriod
+        previousMicros = micros();
+        timer = brightnessDelay;
+      }
+      else
+      {
+        if (digit != 1)
+        {
+          turnDigitOff(digit-1);
+        }
+        turnDigitOn(toDisplay, digit);
+        previousMicros = micros();
+        timer = brightness; //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
+      }
+      digit++;
+    }
 	}
+}
 
-	//After we've gone through the digits, we control the colon and apostrophe (if the display supports it)
-	
-	//Turn on the colon and/or apostrophe
-	if ((digitColon != 255) || (digitApostrophe != 255))
-	{
-		if (DecAposColon & (1<<4)) //Test to see if we need to turn on the Colon
-		{
-			digitalWrite(digitColon, DigitOn);
-			digitalWrite(segmentColon, SegOn);
-		}
-		if (DecAposColon & (1<<5)) //Test DecAposColon to see if we need to turn on Apostrophe
-		{
-			digitalWrite(digitApostrophe, DigitOn);
-			digitalWrite(segmentApostrophe, SegOn);
-		}
-		delayMicroseconds(brightnessDelay + 1); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
+void SevSeg::turnDigitOff(byte digit)
+{
+  //Turn off all segments
+  digitalWrite(segmentA, SegOff);
+  digitalWrite(segmentB, SegOff);
+  digitalWrite(segmentC, SegOff);
+  digitalWrite(segmentD, SegOff);
+  digitalWrite(segmentE, SegOff);
+  digitalWrite(segmentF, SegOff);
+  digitalWrite(segmentG, SegOff);
+  digitalWrite(segmentDP, SegOff);
 
-		//Turn off the colon and/or apostrophe
-		digitalWrite(digitColon, DigitOff);
-		digitalWrite(segmentColon, SegOff);
-		digitalWrite(digitApostrophe, DigitOff);
-		digitalWrite(segmentApostrophe, SegOff);	
-		delayMicroseconds(FRAMEPERIOD - brightnessDelay + 1); //the +1 is a hack so that we can never have a delayMicroseconds(0), causes display to flicker
-	}
-	
+  //Turn off this digit
+  switch(digit) 
+  {
+    case 1:
+      digitalWrite(digit1, DigitOff);
+      break;
+    case 2:
+      digitalWrite(digit2, DigitOff);
+      break;
+    case 3:
+      digitalWrite(digit3, DigitOff);
+      break;
+    case 4:
+      digitalWrite(digit4, DigitOff);
+      break;
+    //This only currently works for 4 digits
+  }
+
+void SevSeg::turnDigitOn(char* toDisplay, byte digit)
+{
+ switch(digit) 
+  {
+    case 1:
+      digitalWrite(digit1, DigitOn);
+      break;
+    case 2:
+      digitalWrite(digit2, DigitOn);
+      break;
+    case 3:
+      digitalWrite(digit3, DigitOn);
+      break;
+    case 4:
+      digitalWrite(digit4, DigitOn);
+      break;
+    //This only currently works for 4 digits
+  }
+
+  //Here we access the array of segments
+  //This could be cleaned up a bit but it works
+  //displayCharacter(toDisplay[digit-1]); //Now display this digit
+  // displayArray (defined in SevSeg.h) decides which segments are turned on for each number or symbol
+  char characterToDisplay = toDisplay[digit-1];
+  if (characterToDisplay & 0x80)	// bit 7 enables bit-per-segment control
+  {	// Each bit of characterToDisplay turns on a single segment (from A-to-G)
+    if (characterToDisplay & 0x01) digitalWrite(segmentA, SegOn);
+    if (characterToDisplay & 0x02) digitalWrite(segmentB, SegOn);
+    if (characterToDisplay & 0x04) digitalWrite(segmentC, SegOn);
+    if (characterToDisplay & 0x08) digitalWrite(segmentD, SegOn);
+    if (characterToDisplay & 0x10) digitalWrite(segmentE, SegOn);
+    if (characterToDisplay & 0x20) digitalWrite(segmentF, SegOn);
+    if (characterToDisplay & 0x40) digitalWrite(segmentG, SegOn);
+  }
+  else
+  {
+    const uint8_t chr = pgm_read_byte(&characterArray[characterToDisplay]);
+    if (chr & (1<<6)) digitalWrite(segmentA, SegOn);
+    if (chr & (1<<5)) digitalWrite(segmentB, SegOn);
+    if (chr & (1<<4)) digitalWrite(segmentC, SegOn);
+    if (chr & (1<<3)) digitalWrite(segmentD, SegOn);
+    if (chr & (1<<2)) digitalWrite(segmentE, SegOn);
+    if (chr & (1<<1)) digitalWrite(segmentF, SegOn);
+    if (chr & (1<<0)) digitalWrite(segmentG, SegOn);
+  }
+  //Service the decimal point
+  if ((DecAposColon & (1<<(digit-1))) && (digit < 5)) //Test DecAposColon to see if we need to turn on a decimal point
+  {
+    digitalWrite(segmentDP, SegOn);
+  }
 }

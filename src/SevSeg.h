@@ -17,17 +17,6 @@
 
 #define BLANK 16 //Special character that turns off all segments (we chose 16 as it is the first spot that has this)
 
-// framePeriod controls the length of time between display refreshes
-// It's also closely linked to the brightness setting
-#define FRAMEPERIOD 2000 
-//Total amount of time (in microseconds) for the display frame. 1,000us is roughly 1000Hz update rate
-//A framePeriod of:
-//5000 is flickery
-//3000 has good low brightness vs full brightness
-//2000 works well
-//500 seems like the low brightness is pretty bright, not great
-
-
 //This is the combined array that contains all the segment configurations for many different characters and symbols
 const uint8_t characterArray[] PROGMEM = {
 //  ABCDEFG  Segments      7-segment map:
@@ -180,6 +169,8 @@ private:
   //Private Functions
   void displayCharacter(byte characterToDisplay); //Illuminates the correct segments
   void SplitNumber(int);
+  void turnDigitOff(byte digit);
+  void turnDigitOn(char* toDisplay, byte digit);
 
   //Private Variables
   boolean mode, DigitOn, DigitOff, SegOn, SegOff;
@@ -190,7 +181,8 @@ private:
   
   byte numberOfDigits;
   
-  unsigned int brightnessDelay;
+  unsigned int brightness, brightnessDelay;
+  unsigned long previousMicros, timer;
 
   byte DigitPins[4];
   byte SegmentPins[8];
