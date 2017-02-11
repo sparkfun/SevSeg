@@ -178,6 +178,8 @@ void SevSeg::SetBrightness(byte percentBright)
 {
 	//Error check brightnessLevel
 	if(percentBright > 100){brightness = 100;}
+  else if(percentBright < 1){brightness = 1;}
+  else{brightness = percentBright;}
   
   brightnessDelay = (100-brightness)*numberOfDigits*100/brightness;
 }
@@ -221,7 +223,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
     else if(digit == numberOfDigits)
     {
       turnDigitOff(numberOfDigits-1);
-      turnDigitOn(toDisplay, numberOfDigits);
+      turnDigitOn(toDisplay, numberOfDigits, DecAposColon);
       digit = digitColon != 255 || digitApostrophe != 255 ? digit+1 : 0;
       previousMicros = micros();
       timer = brightness; //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
@@ -252,7 +254,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
         {
           turnDigitOff(digit-1);
         }
-        turnDigitOn(toDisplay, digit);
+        turnDigitOn(toDisplay, digit, DecAposColon);
         previousMicros = micros();
         timer = brightness; //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
       }
@@ -290,8 +292,9 @@ void SevSeg::turnDigitOff(byte digit)
       break;
     //This only currently works for 4 digits
   }
+}
 
-void SevSeg::turnDigitOn(char* toDisplay, byte digit)
+void SevSeg::turnDigitOn(char* toDisplay, byte digit, byte DecAposColon)
 {
  switch(digit) 
   {

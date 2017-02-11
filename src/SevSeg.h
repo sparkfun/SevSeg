@@ -170,7 +170,7 @@ private:
   void displayCharacter(byte characterToDisplay); //Illuminates the correct segments
   void SplitNumber(int);
   void turnDigitOff(byte digit);
-  void turnDigitOn(char* toDisplay, byte digit);
+  void turnDigitOn(char* toDisplay, byte digit, byte DecAposColon);
 
   //Private Variables
   boolean mode, DigitOn, DigitOff, SegOn, SegOff;
