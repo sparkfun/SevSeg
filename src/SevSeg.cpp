@@ -186,7 +186,7 @@ void SevSeg::SetBrightness(byte percentBright)
 //Each digit is displayed for ~2000us, and cycles through the 4 digits
 //After running through the 4 numbers, the display is turned off
 //Will turn the display on for a given amount of time - this helps control brightness
-void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
+void SevSeg::DisplayString(const char* toDisplay, byte DecAposColon)
 {
 	//For the purpose of this code, digit = 1 is the left most digit, digit = 4 is the right most digit
 	for(byte digit = 1 ; digit < (numberOfDigits+1) ; digit++)
