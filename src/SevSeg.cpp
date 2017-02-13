@@ -1,5 +1,5 @@
 /*
- This library allows an Arduino to easily display numbers and characters on a 4 digit 7-segment 
+ This library allows an Arduino to easily display numbers and characters on a 4 digit 7-segment
  display without a separate 7-segment display controller.
 
  If you have feature suggestions or need support please use the github support page: https://github.com/sparkfun/SevSeg
@@ -7,23 +7,23 @@
  Original Library by Dean Reading (deanreading@hotmail.com: http://arduino.cc/playground/Main/SevenSegmentLibrary), 2012
  Improvements by Nathan Seidle, 2012
 
- Now works for any digital pin arrangement, common anode and common cathode displays. 
+ Now works for any digital pin arrangement, common anode and common cathode displays.
  Added character support including letters A-F and many symbols.
 
- Hardware Setup: 4 digit 7 segment displays use 12 digital pins. You may need more pins if your display has colons or 
+ Hardware Setup: 4 digit 7 segment displays use 12 digital pins. You may need more pins if your display has colons or
  apostrophes.
 
- There are 4 digit pins and 8 segment pins. Digit pins are connected to the cathodes for common cathode displays, or anodes 
- for common anode displays. 8 pins control the individual segments (seven segments plus the decimal point). 
+ There are 4 digit pins and 8 segment pins. Digit pins are connected to the cathodes for common cathode displays, or anodes
+ for common anode displays. 8 pins control the individual segments (seven segments plus the decimal point).
 
- Connect the four digit pins with four limiting resistors in series to any digital or analog pins. Connect the eight segment 
+ Connect the four digit pins with four limiting resistors in series to any digital or analog pins. Connect the eight segment
  pins to any digital or analog pins (no limiting resistors needed). See the SevSeg example for more connection information.
- 
+
  SparkFun has a large, 1" 7-segment display that has four digits.
  https://www.sparkfun.com/products/11408
- Looking at the display like this: 8.8.8.8. pin 1 is on the lower row, starting from the left. 
+ Looking at the display like this: 8.8.8.8. pin 1 is on the lower row, starting from the left.
  Pin 12 is the top row, upper left pin.
- 
+
  Pinout:
  1: Segment E
  2: Segment D
@@ -40,23 +40,23 @@
 
 
  Software:
- Call SevSeg.Begin in setup.  
+ Call SevSeg.Begin in setup.
  The first argument (boolean) tells whether the display is common cathode (0) or common
  anode (1).
  The next four arguments (bytes) tell the library which arduino pins are connected to
  the digit pins of the seven segment display.  Put them in order from left to right.
  The next eight arguments (bytes) tell the library which arduino pins are connected to
  the segment pins of the seven segment display.  Put them in order a to g then the dp.
- 
+
  In summary, Begin(type, digit pins 1-4, segment pins a-g, dp)
- 
+
  The calling program must run the DisplayString() function repeatedly to get the number displayed.
- Any number between -999 and 9999 can be displayed. 
+ Any number between -999 and 9999 can be displayed.
  To move the decimal place one digit to the left, use '1' as the second
- argument. For example, if you wanted to display '3.141' you would call 
+ argument. For example, if you wanted to display '3.141' you would call
  myDisplay.DisplayString("3141", 1);
 
- 
+
  */
 
 #include "SevSeg.h"
@@ -67,11 +67,11 @@ SevSeg::SevSeg()
   DecAposColon = 0; //This variable tracks the decimal place, apostrophe, and colon (if the display has support)
 
 }
-void SevSeg::Begin(boolean mode_in, byte numOfDigits, 
-	byte dig1, byte dig2, byte dig3, byte dig4, 
+void SevSeg::Begin(boolean mode_in, byte numOfDigits,
+	byte dig1, byte dig2, byte dig3, byte dig4,
 	byte digitCol, byte digitApos,
-	byte segA, byte segB, byte segC, byte segD, byte segE, byte segF, byte segG, 
-	byte segDP, 
+	byte segA, byte segB, byte segC, byte segD, byte segE, byte segF, byte segG,
+	byte segDP,
 	byte segCol, byte segApos)
 {
   //Bring all the variables in from the caller
@@ -92,7 +92,7 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
   segmentDP = segDP;
   segmentApostrophe = segApos;
   segmentColon = segCol;
-  
+
   //Assign input values to variables
   //mode is what the digit pins must be set at for it to be turned on. 0 for common cathode, 1 for common anode
   mode = mode_in;
@@ -103,7 +103,7 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
     SegOn = LOW;
     SegOff = HIGH;
   }
-  else 
+  else
   {
     DigitOn = LOW;
     DigitOff = HIGH;
@@ -126,13 +126,13 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
 
   //Turn everything Off before setting pin as output
   //Set all digit pins off. Low for common anode, high for common cathode
-  for (byte digit = 0 ; digit < numberOfDigits ; digit++) 
+  for (byte digit = 0 ; digit < numberOfDigits ; digit++)
   {
     digitalWrite(DigitPins[digit], DigitOff);
     pinMode(DigitPins[digit], OUTPUT);
   }
   //Set all segment pins off. High for common anode, low for common cathode
-  for (byte seg = 0 ; seg < 8 ; seg++) 
+  for (byte seg = 0 ; seg < 8 ; seg++)
   {
     digitalWrite(SegmentPins[seg], SegOff);
     pinMode(SegmentPins[seg], OUTPUT);
@@ -159,9 +159,9 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
 //Set pin modes and turns all displays off
 //This second begin is used when the display does not support a colon and apostrophe
 //The digitApostrophe, segmentApostrophe, and dig/segColon are set to 255 and the normal .Begin is called
-void SevSeg::Begin(boolean mode_in, byte numOfDigits, 
-	byte dig1, byte dig2, byte dig3, byte dig4, 
-	byte segA, byte segB, byte segC, byte segD, byte segE, byte segF, byte segG, 
+void SevSeg::Begin(boolean mode_in, byte numOfDigits,
+	byte dig1, byte dig2, byte dig3, byte dig4,
+	byte segA, byte segB, byte segC, byte segD, byte segE, byte segF, byte segG,
 	byte segDP)
 {
   Begin(mode_in, numOfDigits, dig1, dig2, dig3, dig4, 255, 255, segA, segB, segC,
@@ -189,9 +189,9 @@ void SevSeg::SetBrightness(byte percentBright)
 void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 {
 	//For the purpose of this code, digit = 1 is the left most digit, digit = 4 is the right most digit
-	for(byte digit = 1 ; digit < (numberOfDigits+1) ; digit++) 
+	for(byte digit = 1 ; digit < (numberOfDigits+1) ; digit++)
 	{
-		switch(digit) 
+		switch(digit)
 		{
 			case 1:
 				digitalWrite(digit1, DigitOn);
@@ -212,7 +212,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 		//This could be cleaned up a bit but it works
 		//displayCharacter(toDisplay[digit-1]); //Now display this digit
 		// displayArray (defined in SevSeg.h) decides which segments are turned on for each number or symbol
-		char characterToDisplay = toDisplay[digit-1];
+		unsigned char characterToDisplay = toDisplay[digit-1];
 		if (characterToDisplay & 0x80)	// bit 7 enables bit-per-segment control
 		{	// Each bit of characterToDisplay turns on a single segment (from A-to-G)
 			if (characterToDisplay & 0x01) digitalWrite(segmentA, SegOn);
@@ -237,7 +237,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 		//Service the decimal point, apostrophe and colon
 		if ((DecAposColon & (1<<(digit-1))) && (digit < 5)) //Test DecAposColon to see if we need to turn on a decimal point
 			digitalWrite(segmentDP, SegOn);
-		
+
 		delayMicroseconds(brightnessDelay + 1); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
 		//The + 1 is a bit of a hack but it removes the possible zero display (0 causes display to become bright and flickery)
 		//If you set this too long, the display will start to flicker. Set it to 25000 for some fun.
@@ -253,7 +253,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 		digitalWrite(segmentDP, SegOff);
 
 		//Turn off this digit
-		switch(digit) 
+		switch(digit)
 		{
 			case 1:
 			  digitalWrite(digit1, DigitOff);
@@ -270,11 +270,11 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 			//This only currently works for 4 digits
 		}
 		// The display is on for microSeconds(brightnessLevel + 1), now turn off for the remainder of the framePeriod
-		delayMicroseconds(FRAMEPERIOD - brightnessDelay + 1); //the +1 is a hack so that we can never have a delayMicroseconds(0), causes display to flicker 		
+		delayMicroseconds(FRAMEPERIOD - brightnessDelay + 1); //the +1 is a hack so that we can never have a delayMicroseconds(0), causes display to flicker
 	}
 
 	//After we've gone through the digits, we control the colon and apostrophe (if the display supports it)
-	
+
 	//Turn on the colon and/or apostrophe
 	if ((digitColon != 255) || (digitApostrophe != 255))
 	{
@@ -294,8 +294,8 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 		digitalWrite(digitColon, DigitOff);
 		digitalWrite(segmentColon, SegOff);
 		digitalWrite(digitApostrophe, DigitOff);
-		digitalWrite(segmentApostrophe, SegOff);	
+		digitalWrite(segmentApostrophe, SegOff);
 		delayMicroseconds(FRAMEPERIOD - brightnessDelay + 1); //the +1 is a hack so that we can never have a delayMicroseconds(0), causes display to flicker
 	}
-	
+
 }
